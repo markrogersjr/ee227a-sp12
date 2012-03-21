@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx}
+\newcommand{\argmin}[1]{\underset{#1}{\operatorname{argmin}}\text{ }}
+\begin{document}
+\title{Fast, Robust Classification with Applications to Periodic Variable Star Data Sets}
+\author{Nathan Boley, Siqi Wu, Mark Rogers, and James Long}
+\maketitle
+We aim to design an efficient, robust support vector machine (SVM) algorithm by combining 1) automated tuning of the regularization parameter $\lambda$ (see \cite{hastie2004entire}) and 2) classification of interval data (see \cite{el2003robust}). The performance of this novel SVM will be tested using periodic variable star data where features are known to lie within confidence intervals. Results will be compared to several other implementations of the SVM, including each method individually and the SVM with the regularization parameter hand-tuned.
+
+Roughly 10\% of stars exhibit variation in luminosity over time. Variable stars fall into one of a dozen or so classes. Determining the correct class of a star is important for astronomical knowledge discovery and efficient use of telescopic follow-up resources \cite{walkowicz2009impact}.
+
+For a particular star, a telescope will observe it at a set of times $t_{1},\ldots,t_{l}$, recording flux measurements (amount of light emitted by star) of $m_{1},\ldots,m_{l}$. Typically there are measures of uncertainty on the flux measurements $e_{1},\ldots,e_{l}$.
+
+The standard method for constructing classifiers on this data is to extract features from $D_{i}=\{(t_{i},m_{i},e_{i})\}_{i=1}^{l}$ (i.e. take functions of this data) that will separate stars in different classes \cite{richards2011machine,debosscher2007automated}. If we compute $p$ features and have a total of $n$ training stars of known class, then we can use standard classification techniques on this $n\times p$ data matrix.
+
+A major problem with this approach is the high levels and heteroskedastic nature of the uncertainty in the features due to having poorly sampled time series ($l$ is small) or high error in the flux measurements ($e_{i}$ are systematically large). This leads to situations where features meant to represent physical quantities of the time series, such as amplitude or period, are incorrect. Our hope is that applying an interval or chance constrained SVM method (for example \cite{el2003robust,calafiore2006distributionally}) will decrease our mis-classification error as measured against an expert labelled data set.
+
+One potential problem with this approach is that the results will
+necessarily be a function of the regularization tuning parameter.
+One solution is to optimize the tuning parameter so that the optimization
+program is solved in the worst case. However, this can lead to much
+higher prediction error in the average case. Another approach is to
+use cross validation to minimize the prediction error on a test set;
+however, this approach can be very expensive.
+In {[}2{]}, Hastie et. al. approach this problem by deriving an algorithm
+which efficiently computes the entire optimization path for an SVM.
+The authors claim that the algorithm solves the standard SVM problem
+for all regularization parameters in about twice the time that it
+takes for the classic classification problem to solve it for a single,
+fixed tuning parameter. The algorithm relies on work done by Rosset
+and Zhu, who show in {[}1{]} that one can efficiently solve any optimization
+problem of the form
+\begin{equation}
+\hat{\beta}(\text{\ensuremath{\lambda}})=\argmin\, L(y,\,
+X\beta)+\lambda||\beta||_{1},
+\end{equation}
+\\
+where the loss function $L$ is either: quadratic, piecewise quadratic,
+piecewise linear, or mixed quadratic linear. Since the interval SVM
+problem is of this form, we hope to be able to derive and implement
+a fast algorithm.
+
+\bibliographystyle{plain}
+\bibliography{outline}
+
+
+\end{document}
