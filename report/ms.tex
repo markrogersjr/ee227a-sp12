@@ -1,0 +1,77 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,textcomp,amssymb,geometry,graphicx}
+\newcommand{\argmin}[1]{\underset{#1}{\operatorname{argmin}}\text{ }}
+\begin{document}
+\title{Fast, Robust Classification with Applications to Periodic Variable Star Data Sets}
+\author{Nathan Boley, Siqi Wu, Mark Rogers, and James Long}
+\maketitle
+
+\section{Light Curves}
+
+Figures \ref{fig:mira}, \ref{fig:cepheid}, \ref{fig:rrlyrae} show the light curves (i.e. time series) of three stars. Each is of a different class. The figures show the raw light curve (time on x-axis, magnitude on y-axis) and folded light curve (phase on x-axis, magnitude on y-axis). The phase is determined by computing a period (sometimes wrong!, for example figure \ref{fig:mira}) for each star, and then looking at the remainder of time divided by the period. The folded light curve often make the structure of the function much clearer.
+
+\begin{figure}[h]
+  \begin{center}
+    \begin{includegraphics}[scale=.5]{204.pdf}
+      \caption{Light curve of a Mira type variable star.\label{fig:mira}}
+    \end{includegraphics}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[h]
+  \begin{center}
+    \begin{includegraphics}[scale=.5]{2000.pdf}
+      \caption{Light curve of a Classical type variable star.\label{fig:cepheid}}
+    \end{includegraphics}
+  \end{center}
+\end{figure}
+
+
+\begin{figure}[h]
+  \begin{center}
+    \begin{includegraphics}[scale=.5]{4000.pdf}
+      \caption{Light curve of a RR Lyrae AB variable star.\label{fig:rrlyrae}}
+    \end{includegraphics}
+  \end{center}
+\end{figure}
+
+
+
+\section{Initial Classification Work}
+
+\subsection{Ignoring Errors}
+I made a data set of 5508 of these light curves of class Mira, Classical Cepheid, and RR Lyrae AB. Random forest (a type of classifier) obtained a 0.55\% error rate, without using any feature error information. So the current classes may be too easy. I could generate features for some stars that belong to classes that are more similar to each other e.g. using stars from classes RR Lyrae C and RR Lyrae D (not used here) are a lot alike and would have much higher error rates.
+
+\subsection{Generating Hyper-rectangles}
+To generate the hyper-rectangles I did the following:
+\begin{enumerate}
+\item sliced each light curve into 5 contiguous parts. ordering measurements in time: slice 1 is 0\% through 50\%, slice 2 is 10\% through 60\%, . . .
+\item derive features for each of these parts
+\item put the interval minimum at the lowest value of the feature for the 5 slices. put the interval max at the maximum feature value across the 5 slices
+\end{enumerate}
+There are several problems with this approach.
+\begin{enumerate}
+\item measurements in the middle of the light curve get used more often
+\item sometimes the intervals do not contain the feature obtained when using the whole light curve. this is because taking shorter sections of light curves biases certain features high or low (frequency significance features tend to go down, should probably just get rid of these anyway)
+\end{enumerate}
+Bootstrap sampling might be a good approach, but this would destroy cadence sensitive features. So not sure what to do. This might be something interesting to discuss in the paper: \textbf{Determining feature error intervals for time series / image data is difficult.}
+
+
+
+\section{Notes on ``Robust Classification with Interval Data''}
+\begin{enumerate}
+\item how is new data point classified? this doesn't seem to be mentioned anywhere
+\item role of $\rho$ is not super clear. described as a ``global measure of uncertainty'' on page 3 but then is then is optimized over e.g. equation 16
+\item $\Sigma$ known and given
+\item no mention of kernels for SVM with intervals. (kernels are mentioned with respect to MPM on page 11) perhaps SVM intervals don't work with intervals. that seems really bad. maybe if kernel preserves rectangular structure of interval?
+\end{enumerate}
+\section{Note on Data}
+\begin{enumerate}
+\item for shorter lightcurves, certain features are biased downwards (for example freq\_signif features). probably std as well. should do bootstrap sampling instead? but bootstrap sampling destroys p2p features.
+\end{enumerate}
+
+
+
+
+\end{document}

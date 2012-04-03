@@ -1,0 +1,19 @@
+Description of Data Files
+April 1, 2012
+James Long
+
+There are 4 data files all in semi-colon separated columns.
+
+1) convexMeta.dat: contains features, classes, and a lot of meta data about each observation. i do NOT recommend using this file.
+
+2) convexPoint.dat: 1 row / observation. contains 1 column per feature for the full time series, a classification column giving the class of observation, and a source_id column that links observations here with observations in the other data files. this is a good file to use for the non-interval analysis.
+
+3) convexInterval.dat: 1 row / observation. 2 columns per feature. each feature column has a feature name with either "L" or "U" appended. column names with "L" are the lower bound for this feature. feature names with "U" are the upper bound for this feature. features should match those in convexPoint.dat. this file also has columns "classification" and "source_id". use the "source_id" to link observations in this file with those in convexPoint.dat
+
+4) convexTfe.dat: "raw" data i.e. each observation is in time series form. each observation from convexPoint.dat and convexInterval.dat is represented as many rows here (1 row / measurement on the observation). this file allows you to visualize the actual time series. the columns are:
+  measurements_id: pretty much useless
+  time: the time of the luminosity measurement
+  flux: the luminosity of the star at that time
+  error: estimate of error on flux measurement
+  source_id: the observation that these measurements are coming from
+
