@@ -77,37 +77,37 @@ DrawThreeLightCurves=function(source_to_plot,data1,time_flux,
 
   ## plot the raw light curve
   if(plot.unfolded){
-    plotLightCurve(tfe,maintitle=as.character(lc.class),point.colors=point.colors,
+    plotLightCurve(tfe,maintitle=paste(lc.class,"Light Curve"),point.colors=point.colors,
                    plot.errors=plot.errors)
   }
   
   ## fold on twice estimated period
   tfe[,1] = (tfe[,1] %% period) / period
   if(plot.folded.twice){
-    plotLightCurve(tfe,xLabel="Phase",maintitle=period,point.colors=point.colors,
-                   plot.errors=plot.errors)
+    plotLightCurve(tfe,xLabel="Phase",maintitle=paste(lc.class,"folded on period",period),
+                   point.colors=point.colors,plot.errors=plot.errors)
     if(smoother){
       line.smu = supsmu(tfe[,1],tfe[,2],periodic=TRUE)
       line.smu$y = -1 * line.smu$y
-      lines(line.smu$x,line.smu$y,col='red',lty=1,lwd=2)
+      lines(line.smu$x,line.smu$y,col='gray',lty=1,lwd=2)
       line.smu = supsmu(tfe[,1],tfe[,2],
         span=.05,wt=1/tfe[,3],periodic=TRUE,bass=8)
       line.smu$y = -1 * line.smu$y
-      lines(line.smu$x,line.smu$y,col='green',lty=1,lwd=2)
+      ##lines(line.smu$x,line.smu$y,col='green',lty=1,lwd=2)
     }
   }  
   ## fold on estimated period
   tfe[,1] = (tfe[,1] %% .5) / .5
   if(plot.folded){
-    plotLightCurve(tfe,xLabel="Phase",maintitle=period/2,point.colors=point.colors,
-                   plot.errors=plot.errors)  
+    plotLightCurve(tfe,xLabel="Phase",maintitle=paste(lc.class,"folded on period",period/2),
+                   point.colors=point.colors,plot.errors=plot.errors)  
     if(smoother){
       line.smu = supsmu(tfe[,1],tfe[,2],periodic=TRUE)
       line.smu$y = -1 * line.smu$y
-      lines(line.smu$x,line.smu$y,col='red',lty=1,lwd=2)
+      lines(line.smu$x,line.smu$y,col='gray',lty=1,lwd=2)
       line.smu = supsmu(tfe[,1],tfe[,2])
       line.smu$y = -1 * line.smu$y
-      lines(line.smu$x,line.smu$y,col='green',lty=1,lwd=2)
+      ##lines(line.smu$x,line.smu$y,col='green',lty=1,lwd=2)
     }
   }
 }
