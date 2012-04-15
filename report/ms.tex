@@ -9,10 +9,13 @@
 
 \section{Introduction}
 
-\section{Periodic Variable Light Curves}
-Modern astronomical surveys observe billions of light sources over the course of a few years. Periodic variables, sources which vary periodically in brightness over time, are some of the most interesting. Periodic variables were crucial in Edwin Hubble's and XXXXX YYYY discovery of the existence of galaxies, and more recently in . . . . . ..
+\section{The Data}
+\subsection{Background on Periodic Variables}
+Modern astronomical surveys observe millions of light sources over the course of a mission lasting a few years. Periodic variables, sources which vary periodically in brightness over time, are some of the most interesting. Periodic variables were crucial in Edwin Hubble's discovery of objects outside the Milky Way. More recently, 
 
-Figure \ref{fig:cepheid} displays the light curve (i.e. time series) of a periodic variable belonging to the class Classical Cepheid. The points in plot a) represent flux measurements (in magnitude) made by the telescope at particular times (the 0 point on the time axis is arbitrary). All of these measurements are of a single object. The brightness of Classical Cepheids varies periodically. Using fourier methods, one can estimate a period from the measurements in plot a).  Plot b) of Figure \ref{fig:cepheid} displays the flux measurements against the phase of each time measurement (again, 0 point of phase is arbitrary). Here we can observe the structure of the periodic variation. This is known as the \textit{folded light curve}. 
+Periodic variables may be divided into a few dozen classes based on physical properties of light sources. Separating the sources into classes is a critical step in turning raw astronomical observations into scientific knowledge. The size of modern data sets requires that much of this work be automated by machine learning and statistical classifiers. 
+
+Figure \ref{fig:cepheid} displays the light curve (i.e. time series) of a periodic variable belonging to the class Classical Cepheid. The points in plot a) represent flux measurements in magnitudes (i.e. brightness of the source) made by the telescope at particular times. The 0 point on the time axis is arbitrary. Using fourier methods, one can estimate a period from the measurements in plot a).  Plot b) of Figure \ref{fig:cepheid} displays the flux measurements of the same object. However here the x-axis is phase of each time measurement, computed using the estimated period of 4.51 days. Here we can observe the structure of the periodic variation. This is known as the \textit{folded light curve}.
 \begin{figure}[h]
   \begin{center}
     \begin{includegraphics}[scale=.5]{2000.pdf}
@@ -21,7 +24,7 @@ Figure \ref{fig:cepheid} displays the light curve (i.e. time series) of a period
   \end{center}
 \end{figure}
 
-There are many classes of periodic variable sources. Figure \ref{fig:mira} displays an example of a Mira light curve. From the y-axis we can see that this source has higher amplitude than the Classical Cepheid (this is typical of the Mira class) and more sinusoidal variation (also typical). Note that the fourier methods appear to have estimated an incorrect period for this source. The true period may be around 161, half the estimate.    
+Figure \ref{fig:mira} displays an example of a Mira light curve. From the y-axis we can see that this source has higher amplitude than the Classical Cepheid (this is typical of the Mira class) and more sinusoidal variation (also typical). Note that the fourier methods appear to have estimated an incorrect period for this source. The true period appears to be around 161 days, half of the estimate.
 \begin{figure}[h]
   \begin{center}
     \begin{includegraphics}[scale=.5]{204.pdf}
@@ -31,19 +34,21 @@ There are many classes of periodic variable sources. Figure \ref{fig:mira} displ
 \end{figure}
 
 
-Separating periodic variables into classes is important for scientific knowledge discovery and efficient use of telescopic follow-up resources. The size of modern data sets requires that much of this work be automated. 
+\subsection{Classification Methodology}
+There has been a lot of recent work in the astronomy literature towards developing highly accurate classifiers for periodic variables \cite{debosscher2007automated,richards2011machine,dubath2011random}. The standard methods work as follows. A telescope observes a source $j$ at times $t_{1},\ldots,t_{l}$, recording flux measurements of $m_{1},\ldots,m_{l}$. Typically there are measures of uncertainty on the flux measurements $e_{1},\ldots,e_{l}$. So each source $j$ is initially characterized by an $l \times 3$ matrix $D_j=\{(t_{i},m_{i},e_{i})\}_{i=1}^{l}$. Note that $l$, the number of times the source was observed, is different for each $D_j$. Also the time sampling of the flux measurements is irregular and different for each source. Associated with each source is a classification, such as Mira, Classical Cepheid, RR Lyrae, etc.
 
+In The standard method for constructing classifiers on this data is to extract features from $D$ (i.e. take functions of this data) that will separate stars in different classes \cite{richards2011machine,debosscher2007automated}. If we compute $p$ features and have a total of $n$ training stars of known class, then we can use standard classification techniques on this $n\times p$ data matrix.
 
-This may be due to intrinsic variation in the amount of light a star emits over time or to extrinsic properties such as in eclipsing binaries systems where the eclipses cause less light to reach a telescope.
+\subsection{Uncertain Features}
+A major problem with this approach is the high levels and heteroskedastic nature of the uncertainty in the features due to having poorly sampled time series ($l$ is small) or high error in the flux measurements ($e_{i}$ are systematically large). This leads to situations where features meant to represent physical quantities of the time series, such as amplitude or period, are incorrect.
 
-Periodic variable starsThese stars exhibit periodic variation in the amount of light they emit.
 
 \begin{enumerate}
-\item background as to what these objects look like
-\item why this task is important / interesting
 \item previous work on the subject, creating features
 \item how there are errors in features
 \end{enumerate}
+
+
 
 \section{Light Curves}
 
@@ -96,6 +101,9 @@ Bootstrap sampling might be a good approach, but this would destroy cadence sens
 \item for shorter lightcurves, certain features are biased downwards (for example freq\_signif features). probably std as well. should do bootstrap sampling instead? but bootstrap sampling destroys p2p features.
 \end{enumerate}
 
+
+\bibliographystyle{plain}
+\bibliography{refs}
 
 
 
