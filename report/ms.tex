@@ -2,7 +2,7 @@
 \usepackage{amsmath,textcomp,amssymb,geometry,graphicx}
 \newcommand{\argmin}[1]{\underset{#1}{\operatorname{argmin}}\text{ }}
 \begin{document}
-\title{Fast, Robust Classification with Applications to Periodic Variable Star Data Sets}
+\title{Fast, Robust Classification with Applications to Periodic Variable Stars}
 \author{Siqi Wu, Mark Rogers, and James Long}
 \maketitle
 
@@ -11,7 +11,7 @@
 
 \section{The Data}
 \subsection{Background on Periodic Variables}
-Modern astronomical surveys observe millions of light sources over the course of a mission lasting a few years. Periodic variables, sources which vary periodically in brightness over time, are some of the most interesting. Periodic variables were crucial in Edwin Hubble's discovery of objects outside the Milky Way. More recently, 
+Modern astronomical surveys observe millions of light sources over the course of a mission lasting a few years. Periodic variables, sources which vary periodically in brightness over time, are some of the most interesting. In the 1920's, periodic variables were crucial in Edwin Hubble's discovery the existence of galaxies \cite{berendzen1971hubble}. More recently, periodic variables have played an important role in determining expansion of the universe \cite{freedman2010hubble}.
 
 Periodic variables may be divided into a few dozen classes based on physical properties of light sources. Separating the sources into classes is a critical step in turning raw astronomical observations into scientific knowledge. The size of modern data sets requires that much of this work be automated by machine learning and statistical classifiers. 
 
@@ -32,23 +32,16 @@ Figure \ref{fig:mira} displays an example of a Mira light curve. From the y-axis
     \end{includegraphics}
   \end{center}
 \end{figure}
-
-
 \subsection{Classification Methodology}
-There has been a lot of recent work in the astronomy literature towards developing highly accurate classifiers for periodic variables \cite{debosscher2007automated,richards2011machine,dubath2011random}. The standard methods work as follows. A telescope observes a source $j$ at times $t_{1},\ldots,t_{l}$, recording flux measurements of $m_{1},\ldots,m_{l}$. Typically there are measures of uncertainty on the flux measurements $e_{1},\ldots,e_{l}$. So each source $j$ is initially characterized by an $l \times 3$ matrix $D_j=\{(t_{i},m_{i},e_{i})\}_{i=1}^{l}$. Note that $l$, the number of times the source was observed, is different for each $D_j$. Also the time sampling of the flux measurements is irregular and different for each source. Associated with each source is a classification, such as Mira, Classical Cepheid, RR Lyrae, etc.
+There has been a lot of recent progress in the astronomy literature towards developing highly accurate classifiers for periodic variables \cite{debosscher2007automated,richards2011machine,dubath2011random}. The standard approach works as follows. A telescope observes a source $j$ at times $t_{1},\ldots,t_{l}$, recording flux measurements of $m_{1},\ldots,m_{l}$. Typically there are measures of uncertainty on the flux measurements $e_{1},\ldots,e_{l}$. So each source $j$ is initially characterized by an $l \times 3$ matrix $D_j=\{(t_{i},m_{i},e_{i})\}_{i=1}^{l}$. Note that $l$, the number of times the source is observed, is different for each $D_j$. Also the time sampling of the flux measurements is irregular and different for each source. Associated with each source is a classification, such as Mira, Classical Cepheid, RR Lyrae, etc.
 
-In The standard method for constructing classifiers on this data is to extract features from $D$ (i.e. take functions of this data) that will separate stars in different classes \cite{richards2011machine,debosscher2007automated}. If we compute $p$ features and have a total of $n$ training stars of known class, then we can use standard classification techniques on this $n\times p$ data matrix.
+In order to construct a classifier, features are \textit{extracted} from $D$ (i.e. take functions of $D$) that will separate sources into different classes. Features vary from study to study, but typical ones include period (inverse of strongest fourier frequency), amplitude, skew, and estimates of derivatives.
+
+If we compute $p$ features and have a total of $n$ training stars of known class ($D_1, \ldots D_n$), then we can use standard classification techniques on this $n\times p$ data matrix to construct a classifier. Given this classifier, we can then assign a class to a new source by extracting features and running the features through the classifier.
+
 
 \subsection{Uncertain Features}
-A major problem with this approach is the high levels and heteroskedastic nature of the uncertainty in the features due to having poorly sampled time series ($l$ is small) or high error in the flux measurements ($e_{i}$ are systematically large). This leads to situations where features meant to represent physical quantities of the time series, such as amplitude or period, are incorrect.
-
-
-\begin{enumerate}
-\item previous work on the subject, creating features
-\item how there are errors in features
-\end{enumerate}
-
-
+A major problem with the standard approach is the high levels and heteroskedastic nature of the uncertainty in the features due to having poorly sampled time series ($l$ is small) or high error in the flux measurements ($e_{i}$ are systematically large). This leads to situations where features meant to represent physical quantities of the time series, such as amplitude or period, are incorrect. As an example \textbf{TODO: Include example with nice graphic here}
 
 \section{Light Curves}
 
