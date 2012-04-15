@@ -3,13 +3,25 @@
 \newcommand{\argmin}[1]{\underset{#1}{\operatorname{argmin}}\text{ }}
 \begin{document}
 \title{Fast, Robust Classification with Applications to Periodic Variable Star Data Sets}
-\author{Nathan Boley, Siqi Wu, Mark Rogers, and James Long}
+\author{Siqi Wu, Mark Rogers, and James Long}
 \maketitle
 
-\section{Light Curves}
 
-Figures \ref{fig:mira}, \ref{fig:cepheid}, \ref{fig:rrlyrae} show the light curves (i.e. time series) of three stars. Each is of a different class. The figures show the raw light curve (time on x-axis, magnitude on y-axis) and folded light curve (phase on x-axis, magnitude on y-axis). The phase is determined by computing a period (sometimes wrong!, for example figure \ref{fig:mira}) for each star, and then looking at the remainder of time divided by the period. The folded light curve often make the structure of the function much clearer.
+\section{Introduction}
 
+\section{Periodic Variable Light Curves}
+Modern astronomical surveys observe billions of light sources over the course of a few years. Periodic variables, sources which vary periodically in brightness over time, are some of the most interesting. Periodic variables were crucial in Edwin Hubble's and XXXXX YYYY discovery of the existence of galaxies, and more recently in . . . . . ..
+
+Figure \ref{fig:cepheid} displays the light curve (i.e. time series) of a periodic variable belonging to the class Classical Cepheid. The points in plot a) represent flux measurements (in magnitude) made by the telescope at particular times (the 0 point on the time axis is arbitrary). All of these measurements are of a single object. The brightness of Classical Cepheids varies periodically. Using fourier methods, one can estimate a period from the measurements in plot a).  Plot b) of Figure \ref{fig:cepheid} displays the flux measurements against the phase of each time measurement (again, 0 point of phase is arbitrary). Here we can observe the structure of the periodic variation. This is known as the \textit{folded light curve}. 
+\begin{figure}[h]
+  \begin{center}
+    \begin{includegraphics}[scale=.5]{2000.pdf}
+      \caption{Light curve of a Classical type variable star.\label{fig:cepheid}}
+    \end{includegraphics}
+  \end{center}
+\end{figure}
+
+There are many classes of periodic variable sources. Figure \ref{fig:mira} displays an example of a Mira light curve. From the y-axis we can see that this source has higher amplitude than the Classical Cepheid (this is typical of the Mira class) and more sinusoidal variation (also typical). Note that the fourier methods appear to have estimated an incorrect period for this source. The true period may be around 161, half the estimate.    
 \begin{figure}[h]
   \begin{center}
     \begin{includegraphics}[scale=.5]{204.pdf}
@@ -19,13 +31,26 @@ Figures \ref{fig:mira}, \ref{fig:cepheid}, \ref{fig:rrlyrae} show the light curv
 \end{figure}
 
 
-\begin{figure}[h]
-  \begin{center}
-    \begin{includegraphics}[scale=.5]{2000.pdf}
-      \caption{Light curve of a Classical type variable star.\label{fig:cepheid}}
-    \end{includegraphics}
-  \end{center}
-\end{figure}
+Separating periodic variables into classes is important for scientific knowledge discovery and efficient use of telescopic follow-up resources. The size of modern data sets requires that much of this work be automated. 
+
+
+This may be due to intrinsic variation in the amount of light a star emits over time or to extrinsic properties such as in eclipsing binaries systems where the eclipses cause less light to reach a telescope.
+
+Periodic variable starsThese stars exhibit periodic variation in the amount of light they emit.
+
+\begin{enumerate}
+\item background as to what these objects look like
+\item why this task is important / interesting
+\item previous work on the subject, creating features
+\item how there are errors in features
+\end{enumerate}
+
+\section{Light Curves}
+
+Figures \ref{fig:mira}, \ref{fig:cepheid}, \ref{fig:rrlyrae} show the light curves (i.e. time series) of three stars. Each is of a different class. The figures show the raw light curve (time on x-axis, magnitude on y-axis) and folded light curve (phase on x-axis, magnitude on y-axis). The phase is determined by computing a period (sometimes wrong!, for example figure \ref{fig:mira}) for each star, and then looking at the remainder of time divided by the period. The folded light curve often make the structure of the function much clearer.
+
+
+
 
 
 \begin{figure}[h]
