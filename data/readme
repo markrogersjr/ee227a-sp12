@@ -2,6 +2,9 @@ Description of Data Files
 April 1, 2012
 James Long
 
+There are two sets of data files (4 files in each set). One set has RR before the file name. This is for the harder classification task of separating three types of RR lyrae. The four files without RR is for the Mira, Cepheid, RR lyrae AB task that is probably to easy for us. The following description is for the files with RR in front, but the RR files are in the exact same format.
+
+ 
 There are 4 data files all in semi-colon separated columns.
 
 1) convexMeta.dat: contains features, classes, and a lot of meta data about each observation. i do NOT recommend using this file.
