@@ -1,0 +1,2 @@
+1. Must write function that converts data files into matrices since .dat files cannot be read for some reason.
+2. For each model, run cross validation. For each (lambda,rho), use a different machine.
