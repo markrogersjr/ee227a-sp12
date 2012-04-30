@@ -29,9 +29,9 @@ for i = 1:n
 	i
 	C = split(fgetl(f),';');
 	source_id(i) = str2num(C{1});
-	class{i} = C{J};
-	if ~ismember(class{i},class_names)
-		class_names{numel(class_names)+1} = class{i};
+	class_of_each_datapoint{i} = C{J};
+	if ~ismember(class_of_each_datapoint{i},class_names)
+		class_names{numel(class_names)+1} = class_of_each_datapoint{i};
 	end
 	for j = 0:(p+1)
 		num = str2num(C{j+1});
@@ -46,9 +46,9 @@ end
 
 % construct Y
 for i = 1:numel(class_names)
-	iClass = find(strcmp(class,class_names{i}))
+	iClass = find(strcmp(class_of_each_datapoint,class_names{i}))
 	Y(iClass) = i*ones(numel(iClass),1);
 end
 
 % save data in .mat file
-save(sname,'X','Y','class','class_names','source_id','feature_names');
+save(sname,'X','Y','class_of_each_datapoint','class_names','source_id','feature_names');

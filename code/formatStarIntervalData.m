@@ -26,7 +26,7 @@ p = (J-2)/2;
 X = zeros(n,p);
 S = zeros(n,p);
 Y = zeros(n,1);
-class = cell(n,1);
+class_of_each_datapoint = cell(n,1);
 class_names = {};
 source_id = zeros(n,1);
 L = zeros(n,p);
@@ -39,10 +39,10 @@ s = fgetl(f);
 for i = 1:n
 	C = split(fgetl(f),';');
 	disp([i,numel(C),J])
-	class{i} = C{J-1};
+	class_of_each_datapoint{i} = C{J-1};
 	try,source_id(i) = str2num(C{J});catch err,keyboard;end
-	if ~ismember(class{i},class_names)
-		class_names{numel(class_names)+1} = class{i};
+	if ~ismember(class_of_each_datapoint{i},class_names)
+		class_names{numel(class_names)+1} = class_of_each_datapoint{i};
 	end
 	for j = 1:(J-2)
 		feature_name = raw_feature_names{j}(1:(numel(raw_feature_names{j})-1));
@@ -70,9 +70,9 @@ end
 X = (L+U) ./ 2;
 S = abs(L-U) ./ 2;
 for i = 1:numel(class_names)
-	iClass = find(strcmp(class,class_names{i}));
+	iClass = find(strcmp(class_of_each_datapoint,class_names{i}));
 	Y(iClass) = i*ones(numel(iClass),1);
 end
 
 % save data in .mat file
-save(sname,'X','Y','S','class','class_names','source_id','feature_names');	
+save(sname,'X','Y','S','class_of_each_datapoint','class_names','source_id','feature_names');	
