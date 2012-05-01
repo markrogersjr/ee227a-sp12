@@ -4,8 +4,10 @@
 ## TODO:
 ## multivariate gaussian classes
 ## error bars / interpretation of error bars
+##   - represent large test error through error bars
 ## fix plotting issue
 ## make loop more elegant
+## code up simulated data from p 431 in hastie ("skin around an orange")
 
 import numpy as np
 import matplotlib
@@ -46,8 +48,7 @@ def fake_interval(means,covs,ns):
 
 
 def unittest():
-    ## make sure we are generating normals
-    ## with correct mean and variance
+    ## qda_model
     mean = [3.0,5.0,-10.0,1.,6.]
     var = [1.3,4.0,9.0,1.,5.]
     for ii in zip(mean,var):
