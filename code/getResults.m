@@ -11,6 +11,10 @@ if strcmp(model,'path')
 	S = rand(size(X));
 end
 
+
+% normalize data via quantile ranking
+[X Y S] = quantile_ranking(X,Y,S);
+
 % if multiclass data, then choose the two classes with the most datapoints
 class_indices = 1:max(Y);
 class_freqs = zeros(size(class_indices));
