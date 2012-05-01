@@ -217,13 +217,7 @@ svm.fit.e = svm(fakedata$x,fakedata$y)
 
 
 
-################
-################ testing out svm on 
-################
 
-
-## using hastie's SVM
-library('e1071')
 
 ## if the data are not normalized, var = 1 along each dim,
 ## is there a problem with the margin concept
@@ -262,9 +256,16 @@ abline(a=(-b0 / b[2]),b=(-b[1] / b[2]),col='grey')
 ## this should be invarient to cost
 
 
-####
-#### train svm on cepheid point data
-####
+
+
+
+stop
+
+
+################
+################ testing out svm on RR lyrae data
+################
+
 
 
 
