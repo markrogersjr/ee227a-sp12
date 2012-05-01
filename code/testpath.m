@@ -1,13 +1,7 @@
-function test(iParams)
+function testpath(iParams)
 
-%fname = '/home/aa/ugrad/mrogers/ee227a/project/data/simulated_interval';
-%sname = '/home/aa/ugrad/mrogers/ee227a/project/results/simulated_interval/path/path';
-%fname = '/home/aa/ugrad/mrogers/ee227a/project/data/RRconvexPoint';
-%sname = '/home/aa/ugrad/mrogers/ee227a/project/results/RRconvexPoint/path/path';
-%fname = '/home/aa/ugrad/mrogers/ee227a/project/data/RRconvexInterval';
-%sname = '/home/aa/ugrad/mrogers/ee227a/project/results/RRconvexInterval/path/path';
-fname = '/home/aa/ugrad/mrogers/ee227a/project/data/RR2convexInterval';
-sname = '/home/aa/ugrad/mrogers/ee227a/project/results/RR2convexInterval/path/path';
+fname = '/home/aa/ugrad/mrogers/ee227a/project/data/CEPconvexInterval';
+sname = '/home/aa/ugrad/mrogers/ee227a/project/results/CEPconvexInterval/path/path';
 
 
 
