@@ -1,4 +1,14 @@
-function collectResults(model,fname_prefix,sname)
+function collectResults(fname_prefix,sname,params_fname,name_of_dataset)
+% collectResults.m stores all losses computed by computeResults.m in a matrix and plots them.
+%
+% INPUTS
+% fname_prefix: filename prefix.  All result files are of the form fname_prefix_index.mat
+% sname[DO NOT GIVE AN EXTENSION]: file to store matrix of results.  also the name of the plot files.
+% params_fname: name of file where parameters are stored.
+% name_of_dataset: name of dataset analyzed, which is used to label plots
+
+
+% do not give sname an extension.
 if strcmp(fname_prefix(numel(fname_prefix)),'/')
 	fname_prefix = fname_prefix(1:(numel(fname_prefix)-1));
 end
@@ -7,21 +17,38 @@ dname = fname_prefix;
 while ~strcmp(dname(numel(dname)),'/')
 	dname = dname(1:(numel(dname)-1));
 end
-if strcmp(model,'path')
-	load('/home/aa/ugrad/mrogers/ee227a/project/paramspath')
-	results = zeros(size(Params));	
-elseif strcmp(model,'interval')
-	load('/home/aa/ugrad/mrogers/ee227a/project/paramsinterval')
-	results = zeros(size(Params));
-elseif strcmp(model,'combined')
-	load('/home/aa/ugrad/mrogers/ee227a/project/paramscombined')
-	results = zeros(size(Params));
-end
-save(sname,'results');
-load(sname); % has results variable in it, a table of loss values
+load(params_fname);
+results = zeros(size(Params));
 for i = 1:numel(d)
 	load([dname d(i).name]);
 	iParam
 	results(iParam) = loss;
 end
-save(sname,'results');
+save([sname '.mat'],'results','Lambda','Rho');
+if ismember(0,Rho)
+	i = find(Rho==0);
+	f=figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
+	plot(Lambda,results(:,i));
+	title(['standard SVM applied to ' name_of_dataset]);
+	xlabel('lambda');
+	ylabel('loss');
+	saveas(f,[sname '_standard.png']);
+end
+if ismember(0,Lambda)
+	i = find(Lambda==0);
+	f=figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
+	plot(Rho,results(:,i));
+	title(['interval SVM applied to ' name_of_dataset]);
+	xlabel('rho');
+	ylabel('loss');
+	saveas(f,[sname '_interval.png']);
+end
+f=figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
+imagesc(results);
+colorbar;
+title(['combined SVM applied to ' name_of_dataset]);
+xlabel('rho');
+ylabel('lambda');
+saveas(f,[sname '_combined.png']);
+
+	

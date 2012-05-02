@@ -6,4 +6,4 @@ for i = 1:numel(Lambda)
 		Params{i,j} = [Lambda(i) Rho(j)];
 	end
 end
-save(sname,'Params')
+save(sname,'Params','Lambda','Rho')
