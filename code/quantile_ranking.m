@@ -9,7 +9,8 @@ Irandom = randperm(2*n);
 [R Iinverse] = sort(Irandom);
 LH = LH(Irandom,:);
 for i = 1:p
-	[vals ranks] = sort(LH(:,i));
+	[R I] = sort(LH(:,i));
+	[RI ranks] = sort(I);
 	LH(:,i) = norminv(ranks / (numel(ranks)+1),0,1);
 end
 LH = LH(Iinverse,:);
