@@ -6,12 +6,39 @@ library('randomForest')
 
 
 ## get the data
-data1 = read.table("../data/CEPeasy")
+data1 = read.table("../../data/CEPeasy")
 datamatrix = as.matrix(data1)
 p = (ncol(datamatrix)-1)/2
 y = as.factor(datamatrix[,1])
 x = datamatrix[,2:(p+1)]
 x = x[,apply(x,2,var)!=0]
+
+###
+### read in mark's transformed data file to test that
+### U / L to Y X S trans is working correctly
+###
+library('R.matlab')
+library('Rcompression')
+filename = "../../data/.mat"
+mat = readMat(filename)
+p = dim(mat$x)[1]
+x = t(mat$x)
+y = as.factor(mat$y[1,])
+
+
+###
+### read in mark's transformed data file to test that
+### U / L to Y X S trans is working correctly
+###
+library('R.matlab')
+library('Rcompression')
+filename = "../../data/CEPconvexInterval.mat"
+mat = readMat(filename)
+x = mat$X
+p = dim(x)[2]
+y = as.factor(mat$Y[,1])
+featnames = sapply(mat$feature.names,function(x){x[1,1]})
+colnames(x) = featnames
 
 ## get cv error as a function of tuning parameter
 nsplits = 10
@@ -39,3 +66,9 @@ plot(costs,mar_means)
 ## what does random forest do?
 rf.fit = randomForest(x,y)
 rf.fit
+
+dev.new()
+varImpPlot(rf.fit)
+
+
+
