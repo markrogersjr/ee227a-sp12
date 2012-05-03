@@ -32,7 +32,7 @@ if ismember(0,Rho)
 	title(['standard SVM applied to ' name_of_dataset]);
 	xlabel('lambda');
 	ylabel('loss');
-	saveas(f,[sname '_standard.png']);
+	saveas(f,[sname '_' name_of_dataset '_standard.png']);
 end
 if ismember(0,Lambda)
 	i = find(Lambda==0);
@@ -41,14 +41,14 @@ if ismember(0,Lambda)
 	title(['interval SVM applied to ' name_of_dataset]);
 	xlabel('rho');
 	ylabel('loss');
-	saveas(f,[sname '_interval.png']);
+	saveas(f,[sname '_' name_of_dataset '_interval.png']);
 end
 f=figure('units','normalized','outerposition',[0 0 1 1],'visible','off');
-imagesc(results);
+imagesc(Lambda,Rho,results);
 colorbar;
 title(['combined SVM applied to ' name_of_dataset]);
 xlabel('rho');
 ylabel('lambda');
-saveas(f,[sname '_combined.png']);
+saveas(f,[sname '_' name_of_dataset '_combined.png']);
 
 	
