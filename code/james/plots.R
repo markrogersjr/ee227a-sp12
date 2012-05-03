@@ -18,10 +18,10 @@
 
 
 ## load packages
-data1_file = "../data/CEPconvexMeta.dat"
-point_file = '../data/CEPconvexPoint.dat'
-interval_file = '../data/CEPconvexInterval.dat'
-tfe = '../data/CEPconvexTfe.dat'
+data1_file = "../../data/CEPconvexMeta.dat"
+point_file = '../../data/CEPconvexPoint.dat'
+interval_file = '../../data/CEPconvexInterval.dat'
+tfe = '../../data/CEPconvexTfe.dat'
 dataPoint = read.table(point_file,sep=';',header=TRUE)
 dataInterval = read.table(interval_file,sep=';',header=TRUE)
 time_flux = read.table(tfe,sep=';',header=TRUE)
@@ -35,7 +35,7 @@ int_classes[dataPoint$classification==levels(dataPoint$classification)[2]] = 2
 coloring = c("orange","blue")
 pchs = c(1,2)
 
-pdf('../report/period_amplitude.pdf')
+pdf('../../report/period_amplitude.pdf')
 plot(log(dataPoint$amplitude,base=10),
      log(1/dataPoint$freq1_harmonics_freq_0,base=10),
      col=coloring[int_classes],
@@ -44,7 +44,8 @@ plot(log(dataPoint$amplitude,base=10),
      xlab="log(amplitude)",
      ylab="log(period)",
      main="Period-Amplitude Relationship for Two Star Classes")
-rect(-1,0,0,2,border="green",lwd=2)
+rect(log(.1,base=10),log(1,base=10),
+     log(2,base=10),log(200,base=10),border="green",lwd=2)
 legend("topleft",levels(dataPoint$classification),
        col=coloring,pch=pchs,lwd=2)
 dev.off()
