@@ -24,10 +24,10 @@ library('randomForest')
 library('rpart')
 
 ## get the data
-data1_file = "../data/RR2convexMeta.dat"
-point_file = '../data/RR2convexPoint.dat'
-interval_file = '../data/RR2convexInterval.dat'
-tfe = '../data/RR2convexTfe.dat'
+data1_file = "../../data/CEPconvexMeta.dat"
+point_file = '../../data/CEPconvexPoint.dat'
+interval_file = '../../data/CEPconvexInterval.dat'
+tfe = '../../data/CEPconvexTfe.dat'
 dataPoint = read.table(point_file,sep=';',header=TRUE)
 dataInterval = read.table(interval_file,sep=';',header=TRUE)
 time_flux = read.table(tfe,sep=';',header=TRUE)
@@ -155,7 +155,7 @@ text(rpart.fit,use.n=TRUE)
 
 rf.fit = randomForest(classification~.,data=dataPoint)
 rf.fit
-
+varImpPlot(rf.fit)
 
 
 
