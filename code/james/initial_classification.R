@@ -19,6 +19,7 @@ options(width=50)
 source('Rfunctions.R')
 
 ## load packages
+library('R.matlab')
 library('randomForest')
 library('rpart')
 
