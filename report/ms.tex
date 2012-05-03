@@ -53,22 +53,30 @@ A major problem with the standard approach is the high levels and heteroskedasti
 %% Many of the features used for classification rely on a correct estimate of period for the object. For example, features related to the derivative are often computed based on the folded light curve. If the light curve is folded on the wrong period, then the derivative estimates are likely to be wrong.
 
 \section{SVMs for Interval Data}
-\subsection{Mathematical Formulation}
+Support Vector Machines (SVMs) are a popular method for constructing classifiers. Let $x_i \in \mathbb{R}^p$ be the vector of features for observation $i$ and $y_i$ its class (either $-1$ or $+1$), we can determine the SVM classifier by solving the optimization problem,
+\begin{equation}
+\label{eq:svm}
+\min_{\beta,\beta_0}  \sum_{i=1}^n (1 - y_i(\beta^Tx + \beta_0))_{+} + \frac{\lambda}{2}\beta^T\beta
+\end{equation}
+The optimal $\beta^*$ and $\beta_0^*$ are used to classify a new observation $x$ using $sign(\beta^* x + \beta_0)$. $\lambda$ is a tuning parameter that balances a tradeoff between maximizing the margin and separating observations in different classes. An optimal $\lambda$ may be chosen using 0-1 loss on a test set or through cross-validation. See \cite{scholkopf2002learning} for an extensive overview of SVMs.
 
-Support Vector Machines (SVMs) are a popular method for constructing classifiers \cite{scholkopf2002learning}. Letting $x_i \in \mathbb{R}^p$ be the vector of features for observation $i$ and $y_i$ its class (either $-1$ or $+1$), we can determine the SVM classifier by solving the optimization problem,
-\begin{align}
-\label{eq:dual}
-& \min_{\beta,\beta_0}  \sum_{i=1}^n \xi_i + \frac{\lambda}{2}\beta^T\beta\\
-& \text{subject to }  1 - y_if(x_i) \leq \xi_i; \, \xi \geq 0; \, f(x) = \beta_0 + \beta^Tx \nonumber
-\end{align}
-We determine the $\beta^*$ and $\beta_0^*$ that acheive the minimum and classify any new observation $x$ using $sign(\beta^* x + \beta_0)$. $\lambda$ is a tuning parameter than balances a tradeoff between maximizing the margin and separating observations in different classes. An optimal $\lambda$ may be chosen using 0-1 loss on a test set or through cross-validation.
+Various extensions to the standard SVM have been proposed that seek to incorporate uncertainty in the features into the optimization problem. These formulations often take (or can be interpreted) as minimizing the objective function for a worst case allocation of features in some fixed set, i.e.
+\begin{equation}
+\label{eq:svm_minimax}
+\min_{\beta,\beta_0}  \max_{z \in \mathcal{X}} \sum_{i=1}^n (1 - y_i(\beta^Tz_i + \beta_0))_{+} + \frac{\lambda}{2}\beta^T\beta
+\end{equation}
+See \cite{bhattacharyya2004robust,shivaswamy2006second,ben2011chance} for discussions of some of these models.
 
-Various extensions to this classifier have been proposed that seek to incorporate uncertainty in the features ($x$'s) into the optimization problem. These formulations often take (or can be interpreted) worst case 
 
-- similarities to elastic net of LASSO / SVM (cite elastic net article)
-- who has done L2 norm on location of features (
 
-\subsection{Path Algorithm for Determining Optimal Tuning Parameter}
+TO DISCUSS:
+\begin{enumerate}
+\item similarities to elastic net of LASSO / SVM e.g. Wang \cite{wang2007hybrid}
+\item our algorithm is not contained (?) in those considered by Russet \cite{rosset2007piecewise}
+\end{enumerate}
+
+
+\section{Path Algorithm for Interval SVM}
 
 \section{Application to Variable Star Data Sets}
 \subsection{Constructing the Intervals from the Time Series}
@@ -117,38 +125,39 @@ Figure \ref{fig:interval_construction} describes precisely how we subsample the 
 
 
 
-\section{Light Curves}
+%% \section{Light Curves}
 
-Figures \ref{fig:mira}, \ref{fig:cepheid}, \ref{fig:rrlyrae} show the light curves (i.e. time series) of three stars. Each is of a different class. The figures show the raw light curve (time on x-axis, magnitude on y-axis) and folded light curve (phase on x-axis, magnitude on y-axis). The phase is determined by computing a period (sometimes wrong!, for example figure \ref{fig:mira}) for each star, and then looking at the remainder of time divided by the period. The folded light curve often make the structure of the function much clearer.
-
-
+%% Figures \ref{fig:mira}, \ref{fig:cepheid}, \ref{fig:rrlyrae} show the light curves (i.e. time series) of three stars. Each is of a different class. The figures show the raw light curve (time on x-axis, magnitude on y-axis) and folded light curve (phase on x-axis, magnitude on y-axis). The phase is determined by computing a period (sometimes wrong!, for example figure \ref{fig:mira}) for each star, and then looking at the remainder of time divided by the period. The folded light curve often make the structure of the function much clearer.
 
 
-
-\begin{figure}[h]
-  \begin{center}
-    \begin{includegraphics}[scale=.5]{4000.pdf}
-      \caption{Light curve of a RR Lyrae AB variable star.\label{fig:rrlyrae}}
-    \end{includegraphics}
-  \end{center}
-\end{figure}
+%% \begin{figure}[h]
+%%   \begin{center}
+%%     \begin{includegraphics}[scale=.5]{4000.pdf}
+%%       \caption{Light curve of a RR Lyrae AB variable star.\label{fig:rrlyrae}}
+%%     \end{includegraphics}
+%%   \end{center}
+%% \end{figure}
 
 
 
-\section{Initial Classification Work}
+%% \section{Initial Classification Work}
 
-\subsection{Ignoring Errors}
-I made a data set of 5508 of these light curves of class Mira, Classical Cepheid, and RR Lyrae AB. Random forest (a type of classifier) obtained a 0.55\% error rate, without using any feature error information. So the current classes may be too easy. I could generate features for some stars that belong to classes that are more similar to each other e.g. using stars from classes RR Lyrae C and RR Lyrae D (not used here) are a lot alike and would have much higher error rates.
-
-
+%% \subsection{Ignoring Errors}
+%% I made a data set of 5508 of these light curves of class Mira, Classical Cepheid, and RR Lyrae AB. Random forest (a type of classifier) obtained a 0.55\% error rate, without using any feature error information. So the current classes may be too easy. I could generate features for some stars that belong to classes that are more similar to each other e.g. using stars from classes RR Lyrae C and RR Lyrae D (not used here) are a lot alike and would have much higher error rates.
 
 
-\section{Notes on ``Robust Classification with Interval Data''}
+\subsection{The Data Sets}
+
+
+\subsection{Results}
+
+
+
+\subsection{Conclusions}
 \begin{enumerate}
-\item how is new data point classified? this doesn't seem to be mentioned anywhere
-\item role of $\rho$ is not super clear. described as a ``global measure of uncertainty'' on page 3 but then is then is optimized over e.g. equation 16
-\item $\Sigma$ known and given
-\item no mention of kernels for SVM with intervals. (kernels are mentioned with respect to MPM on page 11) perhaps SVM intervals don't work with intervals. that seems really bad. maybe if kernel preserves rectangular structure of interval?
+\item constructing intervals is non-trivial in many high dimensional problems
+\item not clear that this robust framework is ideal when new observation might have low error on certain features
+\item kernels, are they possible to use
 \end{enumerate}
 
 \bibliographystyle{plain}
