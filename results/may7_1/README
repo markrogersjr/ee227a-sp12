@@ -1,0 +1,3 @@
+Lambda = [0 (164-110):(164+120)];
+C = 1 ./ Lambda(2:numel(Lambda));
+Rho = same as in may5_2

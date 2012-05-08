@@ -1,4 +1,4 @@
-function loss = xval(X,Y,S,lambda,rho,cv_split,num_cv_splits)
+function [loss b b0] = xval(X,Y,S,lambda,rho,cv_split,num_cv_splits)
 % cross-validation
 %
 % X = [n x p]: Data
@@ -44,3 +44,6 @@ for i = 1:num_cv_splits
 	loss = loss + svm(XTr,YTr,XTe,YTe,lambda,rho,STr);
 end
 loss = loss / num_cv_splits;
+
+% compute b and b0 by training on entire dataset
+[loss2 b b0] = svm(X,Y,X,Y,lambda,rho,S);

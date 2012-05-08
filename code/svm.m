@@ -1,4 +1,4 @@
-function loss = svm(XTr,YTr,XTe,YTe,lambda,rho,S)
+function [loss b b0] = svm(XTr,YTr,XTe,YTe,lambda,rho,S)
 % if argument is unused, just pass []. Loss function used: sign(y(i) * f(x(i)))
 %
 % INPUTS
