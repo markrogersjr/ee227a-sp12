@@ -13,9 +13,10 @@
 
 
 \section{Introduction}
-In this work we design an efficient, robust support vector machine (SVM) algorithm by combining 1) automated tuning of the regularization parameter $\lambda$ and 2) classification of interval data. The performance of this novel SVM is tested using periodic variable star data where features are believed to lie within confidence intervals. The paper begins with a motivating example -- classification of astronomical time series, continues with a discussion of interval SVMs and efficient path algorithms for these models, and concludes with an application of interval SVMs to two data sets from astronomy.
+In this work we design an efficient, robust support vector machine (SVM) algorithm by combining 1) automated tuning of the regularization parameter $\lambda$ and 2) classification of interval data. The performance of this SVM is tested using periodic variable star data where features are believed to lie within confidence intervals. The paper begins with a motivating example -- classification of astronomical time series (Section \ref{sec:data}), continues with a discussion of interval SVMs and efficient path algorithms for these models (Sections \ref{sec:interval_svms} and \ref{sec:path_algorithm}), and concludes with an application of interval SVMs to two data sets from astronomy (Section \ref{sec:application}).
 
 \section{The Data}
+\label{sec:data}
 \subsection{Background on Periodic Variables}
 Modern astronomical surveys observe millions of light sources (stars, galaxies, asteroids) over the course of a mission lasting a few years. Periodic variables, sources which vary periodically in brightness over time, are some of the most interesting. In the 1920's, periodic variables were crucial in Edwin Hubble's discovery the existence of galaxies \cite{berendzen1971hubble}. More recently, periodic variables have played an important role in determining expansion of the universe \cite{freedman2010hubble}.
 
@@ -60,6 +61,7 @@ A major problem with the standard approach is the high levels and heteroskedasti
 %% Many of the features used for classification rely on a correct estimate of period for the object. For example, features related to the derivative are often computed based on the folded light curve. If the light curve is folded on the wrong period, then the derivative estimates are likely to be wrong.
 
 \section{SVMs for Interval Data}
+\label{sec:interval_svms}
 Support Vector Machines (SVMs) are a popular method for constructing classifiers. Let $x_i \in \mathbb{R}^p$ be the vector of features for observation $i$ and $y_i$ its class (either $-1$ or $+1$). We determine the SVM classifier by solving the optimization problem,
 \begin{equation}
 \label{eq:svm}
@@ -92,8 +94,7 @@ In this work we will fit model \eqref{eq:svmInit} to the periodic variable star 
 Before we apply the model to the data, we describe a path algorithm that allows us to fit the model for all values of $\lambda$, rather than performing a brute force grid search. This is an adaptation of Hastie's path algorithm for standard SVMs \cite{hastie2004entire}.
 
 \section{Path Algorithm for Interval SVM}
-
-
+\label{sec:path_algorithm}
 \subsection{Problem formulation}
 Suppose $n$ data points are given: $(x_i,y_i)$ for $i=1,...,n$. Let $\mathcal I_+ = \{i: y_i=+1\}$ and $\mathcal I_- = \{i: y_i=-1\}$ be the set of positive class and negative class respectively. Also let $n_+=|\mathcal I_+|$ and $n_-=|\mathcal I_-|$ be the number of data points in these two classes. In this section, we will derive an efficient algorithm to compute the entire regularization path for the interval SVM problem \eqref{eq:svmInit}.
 %% \begin{equation}
@@ -229,6 +230,15 @@ For the second scenario, for the initial parameter to change, a point in $\mathc
 
 %Remarks: in \cite{hastie2004entire}, Hastie et.al. split the initialization step into two cases depending on whether $n_+=n_-$ or $n_+>n_-$. In their case $n_+=n_-$, the initial state can be obtained efficiently without solving the quadratic programming problem. This does not seem to be the case in our problem, as it also involves finding the initial values of the extra dual variables $\mu$ and $\nu$. Therefore solving a quardratic problem for starting up the path algorithm cannot be avoided in our case.\\
 
+\begin{center}
+\begin{figure}[!h]
+   \centering
+   \includegraphics[width=0.5\textwidth]{./betaPath.pdf} 
+      \caption{The path of $\beta$ for the simulated data.}
+   \label{fig:betaPath}
+\end{figure}
+\end{center}
+
 \subsection{The Path}
 As in \cite{hastie2004entire}, our algorithm keeps track of the following events:
 \begin{enumerate}
@@ -328,6 +338,20 @@ f(x_j) = \frac{\lambda^l}{\lambda}(f^l(x_j)-h^l(x_j))+h^l(x_j),
 \end{align}
 where $h^l(x) = \sum_{k\in\mathcal E_l}b_j(y_kx_j^Tx_k+g_{jk})+b_0$.
 
+\begin{figure}[ht]
+\begin{center}
+\begin{tabular}{cc}
+$\begin{array}{cc}
+\multicolumn{1}{l}{\mbox{(a)}} & \multicolumn{1}{l}{\mbox{(b)}} \\ \\ \\ [-.35in]
+\includegraphics[width=0.45\textwidth]{./beta0Path} &
+\includegraphics[width=0.45\textwidth]{./alphaPath}
+\end{array}$
+\end{tabular}
+\end{center}
+\caption{(a) Performance across tuning parameters for RR data set. (b) The path of $\alpha$ for the simulated data.}
+\label{fig:beta0alphaPath}
+\end{figure}
+
 \subsection{Finding the Next Event}
 The linear path established above continues until one of the following events occur:
 \begin{enumerate}
@@ -369,32 +393,9 @@ After finding the $\lambda$ at which the next event occurs, we can update all th
 To test the correctness and efficiency of our proposed algorithm, we construct a test data set as follows: let $n_+=10$ and $n_-=8$, and to keep the example simple let us consider having only $p=5$ features. For each $i\in\mathcal V_+$ and $j=1,...,5$, generate $x_{ij}$ from a standard normal distribution $N(0,1)$, independently of each other. Similarly, generate each $x_{ij}$ in the negative class from the normal distribution $N(-0.5,1)$. To construct the precision matrix, for each entry in that matrix, simulate a number from $N(0.1,0.1)$ and then take the absolute value of it. Also, we set $\rho = 1.0$ and target the range of $C$ to be $[0,3]$. First, we use a brute-force algorithm to compute the regularization paths for the parameters, making a call to the function that solves one interval SVM problem ({\tt svmInterval}) at a finite break points of along the interval $[0,3]$. We then run our interval SVM path algorithm on this data set and compare the results of the two approaches. The paths for $\beta$ are shown in Figure~\ref{fig:betaPath} and the plots for $\beta_0$ and $\alpha$ can be found in the Appendix. In each of the plot, the paths are computed via the brute-force algorithm and the break points (indicated by the dash lines) are predicted by the path algorithm. It can be seen that our path algorithm correctly identifies all the changing points in this example.
 
 
-\begin{center}
-\begin{figure}[!h]
-   \centering
-   \includegraphics[width=0.7\textwidth]{./betaPath.pdf} 
-      \caption{The path of $\beta$ for the simulated data.}
-   \label{fig:betaPath}
-\end{figure}
-\end{center}
-
-
 \subsection{Computation Complexity}
 Hastie et al \cite{hastie2004entire} suggests the running time of their algorithm to be $O(n^2m+nm^2)$, where $m$ is the average size of the elbow $\mathcal E^l$. Since our algorithm is a variant of theirs (in particular, the core burden of the computation is still to solve the linear system which results in $O(m_l^3)$. Of course, we might have many of such systems the along the path), we conjecture our running time to be the same. We time our path algorithm for fitting the data in the previous section and the elapsed time is 1.01 secs on a 2.66 GHz Intel Core 2 Duo Mac OS machine. As a comparison, the running time for the brute-force algorithm is 66.27 secs for 300 points along the path. Note that the path algorithm gives the true path while the brute-force algorithm is still finding only a few snapshots of the path.  
 
-\begin{figure}[ht]
-\begin{center}
-\begin{tabular}{cc}
-$\begin{array}{cc}
-\multicolumn{1}{l}{\mbox{(a)}} & \multicolumn{1}{l}{\mbox{(b)}} \\ \\ \\ [-.35in]
-\includegraphics[width=0.45\textwidth]{./beta0Path} &
-\includegraphics[width=0.45\textwidth]{./alphaPath}
-\end{array}$
-\end{tabular}
-\end{center}
-\caption{(a) Performance across tuning parameters for RR data set. (b) The path of $\alpha$ for the simulated data.}
-\label{fig:beta0alphaPath}
-\end{figure}
 
 %\subsection{Extension to Kernal} (You need to transform the uncertainty in the original data space into the kernal space)
 %\note{in fitting the CEP data,  between 2.03 and 2.13 $\beta0$ value can be arbitrary}
@@ -403,19 +404,9 @@ All the programs for this project are included in the {\tt zip} file submitted t
 
 
 \section{Application to Variable Star Data Sets}
+\label{sec:application}
 We now return to the periodic variable classification problem and discuss construction of hyper-rectangles, the specific data sets we use, and results from the models.
 \subsection{Constructing the Intervals from the Time Series}
-In certain applications, methods for constructing hyper-rectangles (or hyper-spheres) in feature space may be fairly straitforward. For example in El Ghaoui \cite{el2003robust}, the authors discuss applications to micro-array data where several replicates of some experiment are available, and a hyper-rectangle can be chosen to enclose all replicates.
-
-With astronomy data there is no clearly correct way to construct intervals around features which are themselves complicated functions of time series. A few possibilities include:
-\begin{enumerate}
-\item Make width of feature interval proportional to number of measurements in time series. Long time series will have small intervals around features, short time series will have wide intervals. For simple features, such as the standard deviation of the brightness measurements, making the interval width go down at rate $\sqrt{n}$ has a probabilistic interpretation via the central limit theorem.
-\item Subsample the time series and derive features for each subsample. Represent observations as hyper-rectangles that contain features derived from every subsample (or a certain fraction of the subsamples).
-\item Heuristically put intervals around observations with features that are wrong. For example, the amplitude of a star cannot be greater than 6 magnitudes, so any star with amplitude greater than 6 mags could be given an interval that contains values less than 6.
-\end{enumerate}
-In this work we take the second approach. While the first approach is attractive for simple features, many features (such as frequency) do not have a $\sqrt{n}$ convergence to the true value. Further, the irregular time sampling means that even simple features may not have a $\sqrt{n}$ convergence. The third approach involves a lot of domain knowledge and will change from application to application. Further, there is no guarantee that features within the range of what is physically possible are actually correct.
-
-Figure \ref{fig:interval_construction} describes precisely how we subsample the time series and determine interval widths. The details of this procedure could be changed. For example one could bootstrap sample the time measurements, instead of subsampling contiguous sections. Certain computational considerations enter here. It takes around 1 second to derive features for an average length astronomical time series. So sampling, say 20 times, could become prohibitively expensive if the data set is initially at the limits of what is computationally feasible.
 \begin{figure*}[ht]
 \begin{center}
 {\small
@@ -440,6 +431,17 @@ Figure \ref{fig:interval_construction} describes precisely how we subsample the 
 \caption{Description of interval construction algorithm.\label{fig:interval_construction}}
 \label{lb}
 \end{figure*}
+In certain applications, methods for constructing hyper-rectangles (or hyper-spheres) in feature space may be fairly straitforward. For example in El Ghaoui \cite{el2003robust}, the authors discuss applications to micro-array data where several replicates of some experiment are available, and a hyper-rectangle can be chosen to enclose all replicates.
+
+With astronomy data there is no clearly correct way to construct intervals around features which are themselves complicated functions of time series. A few possibilities include:
+\begin{enumerate}
+\item Make width of feature interval proportional to number of measurements in time series. Long time series will have small intervals around features, short time series will have wide intervals. For simple features, such as the standard deviation of the brightness measurements, making the interval width go down at rate $\sqrt{n}$ has a probabilistic interpretation via the central limit theorem.
+\item Subsample the time series and derive features for each subsample. Represent observations as hyper-rectangles that contain features derived from every subsample (or a certain fraction of the subsamples).
+\item Heuristically put intervals around observations with features that are wrong. For example, the amplitude of a star cannot be greater than 6 magnitudes, so any star with amplitude greater than 6 mags could be given an interval that contains values less than 6.
+\end{enumerate}
+In this work we take the second approach. While the first approach is attractive for simple features, many features (such as frequency) do not have a $\sqrt{n}$ convergence to the true value. Further, the irregular time sampling means that even simple features may not have a $\sqrt{n}$ convergence. The third approach involves a lot of domain knowledge and will change from application to application. Further, there is no guarantee that features within the range of what is physically possible are actually correct.
+
+Figure \ref{fig:interval_construction} describes precisely how we subsample the time series and determine interval widths. The details of this procedure could be changed. For example one could bootstrap sample the time measurements, instead of subsampling contiguous sections. Certain computational considerations enter here. It takes around 1 second to derive features for an average length astronomical time series. So sampling, say 20 times, could become prohibitively expensive if the data set is initially at the limits of what is computationally feasible.
 
 \subsection{Preprocessing the data with quantile ranking}
 Many SVM machine implementation normalize features to ensure that margins are comparable between features e.g. \cite{dimitriadou2011package}. We normalize our data by assigning normal quantiles to the 2n values (lower and upper bounds of the interval) for each feature. This normalization preserves order relations among intervals in the sense that if one interval is completely above another then after normalization it is completely above, and if there is some overlap before normalization there will be some overlap after. Features containing all zeroes were removed from the dataset and missing values were inferred using the median for the feature.
@@ -453,18 +455,6 @@ We use light curves from the Optical Gravitational Lensing Survey III (OGLEIII).
 \end{enumerate}
 
 \subsection{Results}
-
-We treat $C$ and $\rho$ as tuning parameters and grid search across them to find the optimal values. We use a grid search for $C$, rather than the path algorithm, because it gives more consistent results. This may be due to a bug somewhere in our path code. In order to assess performance on the grid, we perform 10 fold cross validation, with some initial processing to determine where the grid should be placed.
-
-Figure \ref{fig:regularizations} shows cross-validation error rates for given C (x-axis) and $\rho$ y-axis for the RR data set (left) and the CEP data set (right). The color strip on the right shows performance when $C=\infty$, i.e. no $L_2$ regularization. In both cases, using $\rho>0$ and $C < \infty$ gives better performance than only relying on one method for regularization. In the left plot (RR data set), there is some evidence of a tradeoff in regularization between $\rho$ and $C$. By this we mean, as one increases $C$ (regularizes less using the standard penalty), the optimal hyper-rectangle size increases, suggesting this is making up for less $L_2$ regularization.
-
-One attractive feature of using hyper-rectangles to represent uncertainty is the opportunity to obtain sparse solutions. In Figures \ref{fig:RRfeatures} (RR) and \ref{fig:CEPfeatures} (CEP) we list the features and coefficients for all features with non-zero coefficients for the models with the lowest error rate. In both cases, over half the features have coefficients exactly 0. It is also true that in both cases many feature have coefficients which are close to, but not quite 0. We might be able to obtain sparser solutions by increasing our $\rho$. The tradeoff is that this would mean choosing a model that did not obtain optimal misclassification performance.
-
-%% The performance of the SVM model was compared  all values of $\lambda$ and a grid search on $\rho$.  For a given $(\lambda,\rho)$, the expected loss was computed by performing cross-validation in 90-10 splits so that the union of testing points across splits is the entire dataset and the intersection is disjoint. See surface plots of loss versus $(\lambda,\rho)$: for the CEP dataset, $\lambda\in \lbrace 0\rbrace\cup [0.375,0.750]$ and $\rho\in\lbrace 0\rbrace\cup [0.090,0.032]$ while for the RR dataset, $\lambda\in\lbrace 0\rbrace\cup [54,284]$ and $\rho\in\lbrace 0\rbrace\cup [0.375,0.750]$. Observe that $(\lambda^*,\rho^*)\neq (0,0)$ for both datasets, which implies that the combined model outperforms both of its degenerates. For the CEP dataset, the optimal $(\lambda^*,\rho^*)=(9,0.320)$ yielded 13.25\% classification error while for the RR dataset, $(\lambda^*,\rho^*)=(284,0.48)$ yielded 21.50\% classification error. THESE NUMBERS DON'T LOOK RIGHT, MUST RERUN analyze\_feature.m.
-
-%% The curves of loss versus $\lambda$ and loss versus $\rho$ were also analyzed.  The loss versus $\lambda$ plot corresponds to the standard point SVM model in Hastie while the loss versus $\rho$ plot corresponds to the interval SVM model in El Ghaoui. Observe the convex-like curvatures, which suggest global minima and hence optimal $\lambda$ and $\rho$. 
-
-
 \begin{figure}[ht]
 \begin{center}
 \begin{tabular}{cc}
@@ -478,6 +468,17 @@ $\begin{array}{cc}
 \caption{(a) Performance across tuning parameters for RR data set. (b) Performance across tuning parameters for CEP data set.}
 \label{fig:regularizations}
 \end{figure}
+We treat $C$ and $\rho$ as tuning parameters and grid search across them to find the optimal values. We use a grid search for $C$, rather than the path algorithm, because it gives more consistent results. This may be due to a bug somewhere in our path code. In order to assess performance on the grid, we perform 10 fold cross validation, with some initial processing to determine where the grid should be placed.
+
+Figure \ref{fig:regularizations} shows cross-validation error rates for given C (x-axis) and $\rho$ y-axis for the RR data set (left) and the CEP data set (right). The color strip on the right shows performance when $C=\infty$, i.e. no $L_2$ regularization. In both cases, using $\rho>0$ and $C < \infty$ gives better performance than only relying on one method for regularization. In the left plot (RR data set), there is some evidence of a tradeoff in regularization between $\rho$ and $C$. By this we mean, as one increases $C$ (regularizes less using the standard penalty), the optimal hyper-rectangle size increases, suggesting this is making up for less $L_2$ regularization.
+
+One attractive feature of using hyper-rectangles to represent uncertainty is the opportunity to obtain sparse solutions. In Figures \ref{fig:RRfeatures} (RR) and \ref{fig:CEPfeatures} (CEP) we list the features and coefficients for all features with non-zero coefficients for the models with the lowest error rate. In both cases, over half the features have coefficients exactly 0. It is also true that in both cases many feature have coefficients which are close to, but not quite 0. We might be able to obtain sparser solutions by increasing our $\rho$. The tradeoff is that this would mean choosing a model that did not obtain optimal misclassification performance.
+
+%% The performance of the SVM model was compared  all values of $\lambda$ and a grid search on $\rho$.  For a given $(\lambda,\rho)$, the expected loss was computed by performing cross-validation in 90-10 splits so that the union of testing points across splits is the entire dataset and the intersection is disjoint. See surface plots of loss versus $(\lambda,\rho)$: for the CEP dataset, $\lambda\in \lbrace 0\rbrace\cup [0.375,0.750]$ and $\rho\in\lbrace 0\rbrace\cup [0.090,0.032]$ while for the RR dataset, $\lambda\in\lbrace 0\rbrace\cup [54,284]$ and $\rho\in\lbrace 0\rbrace\cup [0.375,0.750]$. Observe that $(\lambda^*,\rho^*)\neq (0,0)$ for both datasets, which implies that the combined model outperforms both of its degenerates. For the CEP dataset, the optimal $(\lambda^*,\rho^*)=(9,0.320)$ yielded 13.25\% classification error while for the RR dataset, $(\lambda^*,\rho^*)=(284,0.48)$ yielded 21.50\% classification error. THESE NUMBERS DON'T LOOK RIGHT, MUST RERUN analyze\_feature.m.
+
+%% The curves of loss versus $\lambda$ and loss versus $\rho$ were also analyzed.  The loss versus $\lambda$ plot corresponds to the standard point SVM model in Hastie while the loss versus $\rho$ plot corresponds to the interval SVM model in El Ghaoui. Observe the convex-like curvatures, which suggest global minima and hence optimal $\lambda$ and $\rho$. 
+
+
 
 \begin{figure}
 \include{RR2_features}
