@@ -1,9 +1,25 @@
-STUDENT ID NUMBERS:
+STUDENT ID NUMBERS and Names
 21579617 - Mark Rogers
 20206553 - James Long
 22270627 - Siqi Wu
 
 
+==== FOLDER DESCRIPTIONS
+=== 1) code - all code written for this project
+=== 2) data - data files used by code
+=== 3) outline - the outline we submitted as part of hw2
+=== 4) papers - a few papers we read for this project (just .pdfs)
+=== 5) report - .tex and some .pdf for final report to be submitted
+=== 6) results - output of code moved / stored here
+
+
+
+============
+============ MORE ON THE CODE FOLDER
+============
+
+==== contains code for fitting path algorithm for interval SVM
+==== see folder: code/svmIntervalPath
 Matlab code: the svmIntervalPath package
 svmInterval.m: matlab function to fit an interval SVM by calling cvx functions.
 svmIntervalPath.m: matlab function to compute the entire regularization path.
@@ -11,11 +27,13 @@ svmIntervalInit.m: matlab function to compute the initialization configurations.
 svmIntervalFindNext0.m: matlab function to find the initial break point lambda.
 svmIntervalFindNext.m: matlab function to iteratively find the next events.
 vline.m: a convenient matlab function to plot verticle lines.
-
+=== see folder ExamplePathPlots
 ExamplePathPlots contains three plots that are relevant in our simulated example in the report: alphaPath.pdf, beta0Path.pdf and betaPath.pdf
 
 
 
+
+==== Files for implementing ordinary "brute force" version of interval SVM
 
 CODE FOR CROSS VALIDATION FRAMEWORK:
 svm.m:  Takes as input a training set of interval data, training labels, a testing set of interval data, testing labels, and fixed hyperparameters lambda and rho and outputs the classification error and the model parameters beta and beta0. 
