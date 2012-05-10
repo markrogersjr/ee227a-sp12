@@ -1,0 +1,20 @@
+STUDENT ID NUMBERS:
+21579617
+ADD # HERE
+ADD # HERE
+
+
+
+CODE FOR CROSS VALIDATION FRAMEWORK:
+svm.m:  Takes as input a training set of interval data, training labels, a testing set of interval data, testing labels, and fixed hyperparameters lambda and rho and outputs the classification error and the model parameters beta and beta0. 
+
+xval.m:  Partitions data into disjoint blocks and performs cross-validation to compute an estimate of the expected loss of the SVM with designated hyperparameters and interval dataset.
+
+computeResults.m:  Takes as input an interval dataset and produces a file for each designated (lambda,rho) hyperparameter pair.
+
+batch.m:  Script that calls driver function computeResults.m with indicate dataset and hyperparameters.
+
+
+
+CODE FOR SUMMARIZING RESULTS:
+

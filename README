@@ -1,1 +1,40 @@
-test test test
+STUDENT ID NUMBERS:
+21579617
+ADD # HERE
+ADD # HERE
+
+
+
+CODE FOR CROSS VALIDATION FRAMEWORK:
+svm.m:  Takes as input a training set of interval data, training labels, a testing set of interval data, testing labels, and fixed hyperparameters lambda and rho and outputs the classification error and the model parameters beta and beta0. 
+
+xval.m:  Partitions data into disjoint blocks and performs cross-validation to compute an estimate of the expected loss of the SVM with designated hyperparameters and interval dataset.
+
+computeResults.m:  Takes as input an interval dataset and produces a file for each designated (lambda,rho) hyperparameter pair.
+
+batch.m:  Script that calls driver function computeResults.m with indicate dataset and hyperparameters.
+
+
+
+CODE FOR SUMMARIZING RESULTS:
+collectResults.m:  Aggregates file outputs from computeResults.m to yield two matrices loss_values and L0_norm_b, which summarize loss values and L0 norm values as a function of the hyperparameters lambda and rho.  Also produces plots of all results.
+
+collect.m:  Script that calls driver function collectResults.m with indicated directory of files produced by computeResults.m
+
+analyze_features.m:  Takes as input summary file and outputs a text file containing features paired with the absolute values of their weights.  This is used to determine which features are important.
+
+features.m:  Script that calls driver function analyze_features.m with indicated summary results filename
+
+
+
+
+HELPER FUNCTIONS:
+getParams.m:  Takes as input vectors of hyperparameters Lambda, Rho, and C and produces cell array Params, where Params{i,j} = [Lambda(i) Rho(j)]
+
+quantile_ranking.m:  Normalizes data via the quantile ranking method
+
+preprocess_data.m:  Removes zeros that are either all zeros or contain NaN's and then applies quantile ranking
+
+mytiedrank.m:  Helper function to quantile_ranking.m which simply ranks elements of a vector and assigns equal ranks in the event of ties
+
+	

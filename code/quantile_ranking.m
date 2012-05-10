@@ -1,4 +1,5 @@
 function [X Y S] = quantile_ranking(X,Y,S)
+% normalizes feature values (i.e., columns of X and S) via the quantile ranking method.
 
 n = size(X,1);
 p = size(X,2);

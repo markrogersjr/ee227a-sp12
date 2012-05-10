@@ -1,0 +1,1 @@
+f=figure;subplot('Position',[.1 .1 .5 .8]);imagesc(rand(30,40));subplot('Position',[.7 .1 1.5 .8]);axis square;colorbar;imagesc(rand(30,1));axis off;title('loss vs. rho of interval SVM for CEP');xlabel('C=inf');ylabel('rho');colorbar;
