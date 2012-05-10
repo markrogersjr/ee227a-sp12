@@ -1,5 +1,5 @@
 function computeResults(iParams,fname,save_dname,params_fname)
-% computeResults.m computes the loss of the SVM interval classifier when applied to data in fname. The result is stored in sname_prefix_iParam.mat, the parameters are loaded from params_fname, and iParam is the index of the cell array Params, located in params_fname, to use.
+% computeResults.m computes the loss of the SVM interval classifier when applied to data in fname. The result is stored in sname_prefix_iParam.mat, the parameters are loaded from params_fname, and iParams is a subset of the indices of the cell array Params, located in params_fname, to use.
 
 if ~strcmp(save_dname(numel(save_dname)),'/')
 	save_dname = [save_dname '/'];
@@ -21,8 +21,8 @@ for i = iParams
 	[loss b b0] = xval(X,Y,S,lambda,rho,cv_split,num_cv_splits);
 	iParam = i;
 	if i==1
-		save([save_dname num2str(i,'%03d') '.mat'],'lambda','rho','loss','b','b0','iParam','feature_names','class_of_each_datapoint');
+		save([save_dname num2str(i,'%09d') '.mat'],'lambda','rho','loss','b','b0','iParam','feature_names','class_of_each_datapoint');
 	else
-		save([save_dname num2str(i,'%03d') '.mat'],'lambda','rho','loss','b','b0','iParam');
+		save([save_dname num2str(i,'%09d') '.mat'],'lambda','rho','loss','b','b0','iParam');
 	end
 end

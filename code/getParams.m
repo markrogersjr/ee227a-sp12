@@ -1,5 +1,11 @@
 function getParams(sname,C,Lambda,Rho)
-
+% produces a MAT file containing Params={|Lambda| x |Rho|}, a cell array such that Params{i,j} = [Lambda(i) Rho(j)].  NOte that we cannot allow lambda=inf (or C=0). If passing C only, let Lambda = []. If passing Lambda only, let C = [].
+if isempty(Lambda)
+	Lambda = sort(1./C);
+end
+if isempty(C)
+	C = sort(1./Lambda);
+end
 if size(Lambda,2)==1
 	Lambda = Lambda';
 end
