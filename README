@@ -1,7 +1,19 @@
 STUDENT ID NUMBERS:
-21579617
-ADD # HERE
-ADD # HERE
+21579617 - Mark Rogers
+20206553 - James Long
+22270627 - Siqi Wu
+
+
+Matlab code: the svmIntervalPath package
+svmInterval.m: matlab function to fit an interval SVM by calling cvx functions.
+svmIntervalPath.m: matlab function to compute the entire regularization path.
+svmIntervalInit.m: matlab function to compute the initialization configurations.
+svmIntervalFindNext0.m: matlab function to find the initial break point lambda.
+svmIntervalFindNext.m: matlab function to iteratively find the next events.
+vline.m: a convenient matlab function to plot verticle lines.
+
+ExamplePathPlots contains three plots that are relevant in our simulated example in the report: alphaPath.pdf, beta0Path.pdf and betaPath.pdf
+
 
 
 
