@@ -59,38 +59,44 @@ A major problem with the standard approach is the high levels and heteroskedasti
 %% Many of the features used for classification rely on a correct estimate of period for the object. For example, features related to the derivative are often computed based on the folded light curve. If the light curve is folded on the wrong period, then the derivative estimates are likely to be wrong.
 
 \section{SVMs for Interval Data}
-Support Vector Machines (SVMs) are a popular method for constructing classifiers. Let $x_i \in \mathbb{R}^p$ be the vector of features for observation $i$ and $y_i$ its class (either $-1$ or $+1$), we can determine the SVM classifier by solving the optimization problem,
+Support Vector Machines (SVMs) are a popular method for constructing classifiers. Let $x_i \in \mathbb{R}^p$ be the vector of features for observation $i$ and $y_i$ its class (either $-1$ or $+1$). We determine the SVM classifier by solving the optimization problem,
 \begin{equation}
 \label{eq:svm}
 \min_{\beta,\beta_0}  \sum_{i=1}^n (1 - y_i(\beta^Tx + \beta_0))_{+} + \frac{\lambda}{2}\beta^T\beta
 \end{equation}
-The optimal $\beta^*$ and $\beta_0^*$ are used to classify a new observation $x$ using $sign(\beta^* x + \beta_0)$. $\lambda$ is a tuning parameter that balances a tradeoff between maximizing the margin and separating observations in different classes. An optimal $\lambda$ may be chosen using 0-1 loss on a test set or through cross-validation. See \cite{scholkopf2002learning} for an extensive overview of SVMs.
+The optimal $\beta^{*}$ and $\beta_0^*$ are used to classify a new observation $x$ using $sign(\beta^{*T}x + \beta_0)$. $\lambda$ is a tuning parameter that balances a tradeoff between maximizing the margin and separating observations in different classes. An optimal $\lambda$ may be chosen using 0-1 loss on a test set or through cross-validation. See \cite{scholkopf2002learning} for an extensive overview of SVMs.
 
-Various extensions to the standard SVM have been proposed that seek to incorporate uncertainty in the features into the optimization problem. These formulations often take (or can be interpreted) as minimizing the objective function for a worst case allocation of features in some fixed set, i.e.
+Various extensions to the standard SVM have been proposed that seek to incorporate uncertainty in the features into the optimization problem. These formulations often take the form of (or can be interpreted as) minimizing the objective function for a worst case allocation of features in some fixed set, i.e.
 \begin{equation}
 \label{eq:svm_minimax}
-\min_{\beta,\beta_0}  \max_{z \in \mathcal{X}} \sum_{i=1}^n (1 - y_i(\beta^Tz_i + \beta_0))_{+} + \frac{\lambda}{2}\beta^T\beta
+\min_{\beta,\beta_0}  \max_{z \in \mathcal{X}(\rho)} \sum_{i=1}^n (1 - y_i(\beta^Tz_i + \beta_0))_{+} + \frac{\lambda}{2}\beta^T\beta
 \end{equation}
-See \cite{bhattacharyya2004robust,shivaswamy2006second,ben2011chance} for discussions of some of these models.
+where $\rho$ is some scalar and $\mathcal{X}(\rho)$ defines some set to which $(z_1, \ldots, z_n)$ belong. See \cite{bhattacharyya2004robust,shivaswamy2006second,ben2011chance} for discussions of some of these models.
 
+One way to represent feature uncertainty is to specify that observations must lie within hyper-rectangles of feature space. Formally we let $X$ be an $n \times p$ matrix where row $i$ represents the center of the hyper-rectangle for observation $j$. We define $\Sigma$ to be an $n \times p$ matrix where $\Sigma_{i,j}$ is half the width of the hyper-rectangle around observation $i$, on feature $j$. Following the notation of the SVM above we can express this uncertainty model as
+\begin{equation}
+\mathcal{X}(\rho) = \{Z : X - p\Sigma \leq Z \leq X + \rho \Sigma\}
+\end{equation}
+$\rho$ is a global uncertainty parameter that shrinks or expands the hyper-rectangles uniformly. This model was considered in El Ghaoui\cite{el2003robust}. It is easy to show that for this form of $\mathcal{X}(\rho)$ one can explicity solve for the inner max in equation \eqref{eq:svm_minimax} and obtain
+\begin{equation}
+\label{eq:svmInit}
+\min_{\beta}\sum_{i=1}^n(1-y_i(\beta_0+\beta^Tx_i)+\rho\sigma_i^T|\beta|)_++\frac{\lambda}{2} ||\beta||_2^2.
+\end{equation}
+where $\sigma_i$ is the $i^{th}$ row of $\Sigma$. In \cite{el2003robust}, El Ghaoui drew similarities between the $\rho\sigma_i^T|\beta|$ in this expression and standard $L_1$ regularization for SVMs. For example, if $\Sigma_{i,j} = 1 \ \forall i,j$ then then expression becomes $\rho||\beta||_1$. This interpretation of $\mathcal{X}(\rho)$ in part motivates the use of $\rho$ as a tuning parameter rather than a quantity that is fixed by the inherent uncertainty in the data.
 
+In this work we will fit model \eqref{eq:svmInit} the periodic variable star data set. This provides an opportunity to make use of known feature uncertainty in our classifier. In addition, the connections between $\rho$ and sparsity, may allow us to obtain highly interpretatable classifiers, with few non-zero feature coefficients.
 
-TO DISCUSS:
-\begin{enumerate}
-\item similarities to elastic net of LASSO / SVM e.g. Wang \cite{wang2007hybrid}
-\item our algorithm is not contained (?) in those considered by Russet \cite{rosset2007piecewise}
-\end{enumerate}
-
+Before we apply the model to the data, we describe a path algorithm that allows us to fit the model for all values of $\lambda$, rather than performing a brute force grid search. This is an adaptation of Hastie's path algorithm for standard SVMs \cite{hastie2004entire}.
 
 \section{Path Algorithm for Interval SVM}
 
 
 \subsection{Problem formulation}
-Suppose $n$ data points are given: $(x_i,y_i)$ for $i=1,...,n$. Let $\mathcal I_+ = \{i: y_i=+1\}$ and $\mathcal I_- = \{i: y_i=-1\}$ be the set of positive class and negative class respectively. Also let $n_+=|\mathcal I_+|$ and $n_-=|\mathcal I_-|$ be the number of data points in these two classes. In this section, we will derive an efficient algorithm to compute the entire regularization path for the following interval SVM problem:
-\begin{equation}
-\label{eq:svmInit}
-\min_{\beta}\sum_{i=1}^n(1-y_i(\beta_0+\beta^Tx_i)+\rho\sigma_i^T|\beta|)_++\frac{\lambda}{2} ||\beta||_2^2.
-\end{equation}
+Suppose $n$ data points are given: $(x_i,y_i)$ for $i=1,...,n$. Let $\mathcal I_+ = \{i: y_i=+1\}$ and $\mathcal I_- = \{i: y_i=-1\}$ be the set of positive class and negative class respectively. Also let $n_+=|\mathcal I_+|$ and $n_-=|\mathcal I_-|$ be the number of data points in these two classes. In this section, we will derive an efficient algorithm to compute the entire regularization path for the interval SVM problem \eqref{eq:svmInit}.
+%% \begin{equation}
+%% \label{eq:svmInit}
+%% \min_{\beta}\sum_{i=1}^n(1-y_i(\beta_0+\beta^Tx_i)+\rho\sigma_i^T|\beta|)_++\frac{\lambda}{2} ||\beta||_2^2.
+%% \end{equation}
 %\eqref{eq:q}
 %(\ref{eq:q})
 Introducing slack variables, the problem becomes:
@@ -380,18 +386,19 @@ All the programs for this project are included in the {\tt zip} file submitted t
 
 
 \section{Application to Variable Star Data Sets}
+We now return to the periodic variable classification problem and discuss construction of hyper-rectangles, the specific data sets we use, and results from the models.
 \subsection{Constructing the Intervals from the Time Series}
 In certain applications, methods for constructing hyper-rectangles (or hyper-spheres) in feature space may be fairly straitforward. For example in El Ghaoui \cite{el2003robust}, the authors discuss applications to micro-array data where several replicates of some experiment are available, and a hyper-rectangle can be chosen to enclose all replicates.
 
-With astronomy data there is no clearly correct way to construct intervals around features. A few possibilities include:
+With astronomy data there is no clearly correct way to construct intervals around features which are themselves complicated functions of time series. A few possibilities include:
 \begin{enumerate}
-\item Make width of feature interval proportional to number of measurements in time series. Long time series will have small intervals around features, short time series will have wide intervals. For simple features, such as the standard deviation of the brightness measurements, making the interval width go down at rate root-n has a probabilistic interpretation via the central limit theorem.
+\item Make width of feature interval proportional to number of measurements in time series. Long time series will have small intervals around features, short time series will have wide intervals. For simple features, such as the standard deviation of the brightness measurements, making the interval width go down at rate $\sqrt{n}$ has a probabilistic interpretation via the central limit theorem.
 \item Subsample the time series and derive features for each subsample. Represent observations as hyper-rectangles that contain features derived from every subsample (or a certain fraction of the subsamples).
 \item Heuristically put intervals around observations with features that are wrong. For example, the amplitude of a star cannot be greater than 6 magnitudes, so any star with amplitude greater than 6 mags could be given an interval that contains values less than 6.
 \end{enumerate}
-In this work we take the second approach. While the first approach is attractive for simple features, many features (such as frequency) do not have a sqrt-n convergence to the true value. Further the irregular time sampling means that even simple features may not have a root-n convergence. The third approach involves a lot of domain knowledge and will change from application to application. Further, there is no guarantee that features within the range of what is physically possible are actually correct.
+In this work we take the second approach. While the first approach is attractive for simple features, many features (such as frequency) do not have a $\sqrt{n}$ convergence to the true value. Further, the irregular time sampling means that even simple features may not have a $\sqrt{n}$ convergence. The third approach involves a lot of domain knowledge and will change from application to application. Further, there is no guarantee that features within the range of what is physically possible are actually correct.
 
-Figure \ref{fig:interval_construction} describes precisely how we subsample the time series and determine interval widths. The details of this procedure could be changed. For example one could bootstrap sample the time measurements, instead of subsampling contiguous sections. Certain computational considerations enter here. It takes around 1 second to derive features for an average length light curve. So sampling, say 20 times, could become prohibitively expansive if the data set is initially at the limits of what is computationally feasible.
+Figure \ref{fig:interval_construction} describes precisely how we subsample the time series and determine interval widths. The details of this procedure could be changed. For example one could bootstrap sample the time measurements, instead of subsampling contiguous sections. Certain computational considerations enter here. It takes around 1 second to derive features for an average length astronomical time series. So sampling, say 20 times, could become prohibitively expansive if the data set is initially at the limits of what is computationally feasible.
 \begin{figure*}[ht]
 \begin{center}
 {\small
@@ -401,7 +408,7 @@ Figure \ref{fig:interval_construction} describes precisely how we subsample the 
 \begin{center} \textbf{Constructing Hyper-rectangles from Time Series} \end{center}
 \begin{enumerate}
 \item Order the light curve measurements in time i.e. $\{(t_1,m_1,e_1),(t_2,m_2,e_2), \ldots , (t_l,m_l,e_l)\}$ where $t_i < t_j$ for $i < j$.
-\item Slice each light curve into 5 contiguous sections, producing 5 time series. Slice 1 is $(t_i,m_i,e_i)$ for $\frac{0}{10}l \leq i \leq \frac{5}{10}l$, slice 2 is $\frac{1}{10}l \leq i \leq \frac{6}{10}l$, ect.
+\item Slice each light curve into 5 contiguous sections, producing 5 time series. Slice 1 is $(t_i,m_i,e_i)$ for $0 \leq i \leq .5l$, slice 2 for $.125l \leq i \leq .625l$, slice 3 for $.25l \leq i \leq .75l$ ect.
 %% \begin{enumerate}
 %% \item $\{(t_1,m_1,e_1), \ldots , (t_{l/2},m_{l/2},e_{l/2})\}$
 %% \item $\{(t_1,m_1,e_1),(t_2,m_2,e_2), \ldots , (t_l,m_l,e_l)\}$
@@ -448,9 +455,12 @@ Figure \ref{fig:interval_construction} describes precisely how we subsample the 
 
 
 \subsection{The Data Sets}
-The first dataset analyzed contained two classes of Cepheids (CEP):  classical and [popII].  Each class consisted of $n=200$ observations and $p=58$ features so that each observation is hyperrectangle in $\mathbb{R}^{58}$. The second dataset consisted of two classes of RR,  RR Lyrae AB and RR Lyrae D, with the same values of $n$ and $p$.
+We use light curves from the Optical Gravitational Lensing Survey III (OGLEIII).\footnote{Light curves can be obtained here: http://ogledb.astrouw.edu.pl/~ogle/CVS/}. Since we want to focus on studying sparsity and the relationship between $\rho$ and $\lambda$, we select subsamples from four classes of periodic variable stars and turn these four classes into two separate data sets.
+
+The CEP dataset contains two classes of Cepheids --  Classical Cepheids and Population II Cepheids.  Each class consisted of $n=200$ observations and $p=58$ features so that each observation is hyperrectangle in $\mathbb{R}^{58}$. The RR data set consists of two classes of RR --  RR Lyrae AB and RR Lyrae D, again with $n=200$ and $p=58$.
+
 \subsubsection{Preprocessing the data with quantile ranking}
-A quantile ranking technique was used to normalize values in each feature dimension by reducing the effects of outliers. Viewing the interval data as a three-dimensional array, the end-slices corresponding to the lower- and upper-bounds of the confidence intervals were isolated and then concatenated together to yield a $2n\times p$ array whose values were then mapped to the standard normal distribution. Features containing all zeroes or some NaNs were removed from the dataset.
+Many SVM machine implementation normalize features to ensure that margins are comparable between features e.g. \cite{dimitriadou2011package}. We normalize our data by assigning normal quantiles to the 2n values (lower and upper bounds of the interval) for each feature. This normalization preserves order relations among intervals in the sense that if one interval is completely above another then after normalization it is completely above, and if there is some overlap before normalization there will be some overlap after. Features containing all zeroes were removed from the dataset and missing values were inferred using the median for the feature.
 
 \subsection{Results}
 
@@ -469,6 +479,8 @@ The curves of loss versus $\lambda$ and loss versus $\rho$ were also analyzed.  
 \item not clear that this robust framework is ideal when new observation might have low error on certain features
 \item kernels, are they possible to use
 \item links to code / git repo
+\item similarities to elastic net of LASSO / SVM e.g. Wang \cite{wang2007hybrid}
+\item our algorithm is not contained (?) in those considered by Russet \cite{rosset2007piecewise}
 \end{enumerate}
 
 
