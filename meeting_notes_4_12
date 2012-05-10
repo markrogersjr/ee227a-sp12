@@ -1,6 +1,0 @@
-April 21, 2012
-
-Things to do:
-- Check if Mark's standard- and interval-SVM implementations work correctly testing different lambda's. Recover losses, beta's, and beta0's and compare with Hastie implementation.
-- Fix formatData functions. Keep star data format as is. For simulated data, use [Y X] (point data) and [Y X S] (interval data) formats
-- Incorporate kernel functions.
