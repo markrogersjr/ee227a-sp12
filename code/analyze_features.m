@@ -13,6 +13,8 @@ end
 [X Y S class_of_each_datapoint feature_names] = preprocess_data(X,Y,S,class_of_each_datapoint,feature_names);
 [loss b b0] = svm(X,Y,X,Y,lambdaBEST,rhoBEST,S);
 b=abs(b);
+disp('||beta||_0 = ')
+disp(numel(find(b<10e-8)));
 [R iSorted] = sort(b);
 b = b(iSorted);
 feature_namesOLD = feature_names;
